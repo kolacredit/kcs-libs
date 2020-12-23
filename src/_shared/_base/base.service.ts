@@ -1,11 +1,11 @@
 import { Document, Model } from 'mongoose';
 import * as _ from 'lodash';
 import { isArray } from 'class-validator';
-import { Utils } from '../utils/utils';
-import { ResponseOption } from '../interfaces/response-option';
 import { AppResponse, Pagination, QueryParser } from '../common';
-import AppException from '../exceptions/app-exception';
 import { BaseEntity } from './base.entity';
+import { Utils } from '../utils';
+import { AppException } from '../exceptions';
+import { ResponseOption } from '../interfaces';
 
 export class BaseService<T extends Document, E extends BaseEntity> {
   public routes = {
