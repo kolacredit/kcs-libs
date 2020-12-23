@@ -8,3 +8,6 @@ export * from './middleware';
 export * from './pipes';
 export * from './utils';
 export * from './services';
+export * from './crypto';
+export * from './jobs';
+export * from './providers';
