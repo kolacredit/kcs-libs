@@ -1,11 +1,11 @@
 ## Description
 
-Planboard shared modules.
+Kolacredit shared modules.
 
 ## Installation
 
 ```bash
-$ npm install @tpboard/slibs
+$ npm install @kolacredit/slibs
 ```
 ## Stay in touch
 
