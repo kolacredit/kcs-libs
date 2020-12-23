@@ -1,5 +1,7 @@
 import { Document } from 'mongoose';
 import { Pagination, QueryParser } from '../common';
+import { MailOption } from './mail-option';
+import { SmsOption } from './sms-option';
 
 export interface ResponseOption {
   value: any | Document;
@@ -10,4 +12,6 @@ export interface ResponseOption {
   message?: string;
   count?: number;
   token?: string;
+  sms?: SmsOption;
+  email?: MailOption;
 }
