@@ -1,13 +1,11 @@
-import { Document, Model } from 'mongoose';
+import { Document } from 'mongoose';
 import * as _ from 'lodash';
-import { isArray } from 'class-validator';
+import { Utils } from '../utils/utils';
+import { ResponseOption } from '../interfaces/response-option';
 import { AppResponse, Pagination, QueryParser } from '../common';
-import { BaseEntity } from './base.entity';
-import { Utils } from '../utils';
-import { AppException } from '../exceptions';
-import { ResponseOption } from '../interfaces';
+import { AppException } from '../exceptions/app-exception';
 
-export class BaseService<T extends Document, E extends BaseEntity> {
+export class BaseService<T extends Document> {
   public routes = {
     create: true,
     findOne: true,
@@ -19,12 +17,41 @@ export class BaseService<T extends Document, E extends BaseEntity> {
   public readonly modelName: string;
   public baseUrl: string = 'localhost:3000';
   public itemsPerPage: number = 10;
+  public entity;
+
+  private defaultConfig: any = {
+    config: () => {
+      return {
+        softDelete: false,
+        uniques: [],
+        returnDuplicate: false,
+        fillables: [],
+        updateFillables: [],
+        hiddenFields: ['deleted'],
+      };
+    },
+  };
 
   constructor(
-    protected entity: E,
-    protected readonly model: Model<T>,
+    protected readonly model: any,
   ) {
     this.modelName = model.collection.collectionName;
+    this.entity = model;
+    if (!this.entity.config) {
+      this.entity.config = this.defaultConfig.config;
+    }
+  }
+
+  public get Model() {
+    return this.model;
+  }
+
+  /**
+   * @param {Object} obj required for response
+   * @return {Object}
+   */
+  async validateCreate(obj) {
+    return null;
   }
 
   /**
@@ -54,10 +81,11 @@ export class BaseService<T extends Document, E extends BaseEntity> {
     if (tofill && tofill.length > 0) {
       obj = _.pick(obj, ...tofill);
     }
-    return new this.model({
+    const data = new this.model({
       ...obj,
-      publicId: Utils.generateUniqueId(this.entity.iDToken),
-    }).save();
+      publicId: Utils.generateUniqueId(this.entity.config().iDToken),
+    });
+    return data.save();
   }
 
   /**
@@ -84,7 +112,7 @@ export class BaseService<T extends Document, E extends BaseEntity> {
    */
   async patchUpdate(current, obj) {
     const tofill = this.entity.config().updateFillables;
-    if (tofill.length > 0) {
+    if (tofill && tofill.length > 0) {
       obj = _.pick(obj, ...tofill);
     }
     _.extend(current, obj);
@@ -97,7 +125,7 @@ export class BaseService<T extends Document, E extends BaseEntity> {
    * @return {Object}
    */
   public async findObject(id, queryParser: QueryParser = null) {
-    const condition: any = { publicId: id, deleted: false };
+    const condition: any = { $or: [{ publicId: id }, { _id: id }], deleted: false };
     const object: any = await this.model.findOne(condition);
     if (!object) {
       throw AppException.NOT_FOUND;
@@ -121,6 +149,7 @@ export class BaseService<T extends Document, E extends BaseEntity> {
     }
     return object;
   }
+
 
   /**
    * @param {ResponseOption} option: required email for search
@@ -149,17 +178,25 @@ export class BaseService<T extends Document, E extends BaseEntity> {
         }
         meta.pagination = option.pagination.done();
       }
-      const hiddenField: string[] = this.entity.config().hiddenFields;
-      if (hiddenField && hiddenField.length > 0) {
-        if (isArray(option.value)) {
+      if (
+        this.entity.config().hiddenFields &&
+        this.entity.config().hiddenFields.length
+      ) {
+        const isFunction = typeof option.value.toJSON === 'function';
+        if (Array.isArray(option.value)) {
           option.value = option.value.map((v) =>
-            _.omit(v, ...option.hiddenFields),
+            typeof v === 'string'
+              ? v
+              : _.omit(
+              isFunction ? v.toJSON() : v,
+              ...this.entity.config().hiddenFields,
+              ),
           );
         } else {
-          try {
-            option.value = _.omit(option.value, ...hiddenField);
-          } catch (e) {
-          }
+          option.value = _.omit(
+            isFunction ? option.value.toJSON() : option.value,
+            ...this.entity.config().hiddenFields,
+          );
         }
       }
       return AppResponse.format(meta, option.value);
@@ -169,12 +206,12 @@ export class BaseService<T extends Document, E extends BaseEntity> {
   }
 
   /**
-   * @param {BaseEntity} entity The payload object
+   * @param {Object} model The model object
    * @param {Object} options The payload object
-   * @return {Object} return the profile
+   * @return {Object}
    */
-  public async populate(entity: BaseEntity, options: any) {
-    return this.model.populate(entity, options);
+  public async populate(model: any, options: any) {
+    return this.model.populate(model, options);
   }
 
   /**
@@ -202,7 +239,7 @@ export class BaseService<T extends Document, E extends BaseEntity> {
     console.log('queryParser.query ::::: ', queryParser.query);
     let query = this.model.find(queryParser.query);
     if (
-      queryParser.search &&
+      queryParser.search && this.entity.searchQuery &&
       this.entity.searchQuery(queryParser.search).length > 0
     ) {
       const searchQuery = this.entity.searchQuery(queryParser.search);
@@ -273,5 +310,24 @@ export class BaseService<T extends Document, E extends BaseEntity> {
         .collation({ locale: 'en', strength: 1 }),
       count,
     };
+  }
+
+  /**
+   * @param {Object} obj The request object
+   * @return {Promise<Object>}
+   */
+  public async retrieveExistingResource(obj) {
+    if (this.entity.config().uniques) {
+      const uniqueKeys = this.entity.config().uniques;
+      const query = {};
+      for (const key of uniqueKeys) {
+        query[key] = obj[key];
+      }
+      const found = await this.model.findOne({ ...query, deleted: false, active: true });
+      if (found) {
+        return found;
+      }
+    }
+    return null;
   }
 }

@@ -1,4 +1,5 @@
 export * from './jwt.strategy';
-export * from './mail.service';
+export * from './file-upload.service';
 export * from './job.service';
+export * from './mail.service';
 export * from './paystack.service';

@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
-import { AppStatus } from '../common';
 import { AppException } from './app-exception';
+import { AppStatus } from '../common';
 
 export class WorkerException extends AppException {
   constructor(

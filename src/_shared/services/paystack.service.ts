@@ -1,6 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PayStackBvn } from '../interfaces';
+import { PayStackBvn } from '../interfaces/paystack-bvn';
 
 const PAYSTACK_API_BASE = 'https://api.paystack.co';
 

@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -13,10 +13,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: config.get<string>('app.encryption_key'),
     });
-    console.log('key ', config.get<string>('app.encryption_key'));
+    Logger.log(`key , ${config.get<string>('app.encryption_key')}`);
   }
 
   async validate(payload: any) {
+    Logger.log(`authId , ${payload['authId']}`);
     return {
       ...payload,
     };

@@ -1,6 +1,6 @@
 {
   "name": "@kolacredit/libs",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "author": "Okafor Emmanuel",
   "main": "dist/_shared",
   "license": "UNLICENSED",
@@ -41,6 +41,7 @@
     "commit": "npx git-cz"
   },
   "dependencies": {
+    "@google-cloud/storage": "^5.7.0",
     "@nestjs/common": "^7.5.1",
     "@nestjs/config": "^0.6.1",
     "@nestjs/core": "^7.5.1",
@@ -64,7 +65,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
-    "url-parse": "^1.4.7"
+    "url-parse": "^1.4.7",
+    "aws-sdk": "^2.817.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",

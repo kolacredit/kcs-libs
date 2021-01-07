@@ -22,7 +22,7 @@ import { BaseController } from '../../../_shared/_base';
 import { JwtAuthGuard } from '../../../_shared/guards';
 
 @Controller('todos')
-export class TodoController extends BaseController<TodoDocument, Todo> {
+export class TodoController extends BaseController<TodoDocument> {
   constructor(protected service: TodoService, protected config: ConfigService) {
     super(config, service);
   }
@@ -40,8 +40,9 @@ export class TodoController extends BaseController<TodoDocument, Todo> {
     @Body() payload: UpdateTodoDto,
     @Req() req,
     @Res() res,
+    @Next() next: NextFunction
   ) {
-    super.update(id, payload, req, res);
+    super.update(id, payload, req, res, next);
   }
 
   @Patch('/:id')
@@ -51,7 +52,8 @@ export class TodoController extends BaseController<TodoDocument, Todo> {
     @Body() payload: UpdateTodoDto,
     @Req() req,
     @Res() res,
+    @Next() next: NextFunction
   ) {
-    super.patch(id, payload, req, res);
+    super.patch(id, payload, req, res,  next);
   }
 }

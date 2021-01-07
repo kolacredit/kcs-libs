@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JobService } from './job.service';
 import { ConfigService } from '@nestjs/config';
 import { MailOption, SmsOption } from '../interfaces';
-import { EmailJob, IEmailName, SmsJob } from '../jobs';
+import { IEmailName, SmsJob, EmailJob } from '../jobs';
 import { QueueTasks } from '../common';
 
 @Injectable()
@@ -10,11 +10,13 @@ export class MailService {
   constructor(
     private readonly config: ConfigService,
     private readonly jobService: JobService,
-  ) {}
+  ) {
+  }
 
   queueToSendEmail(option: MailOption) {
     this.handleEmail(
       option.emailName,
+      option.fromEmail,
       option.subject,
       option.template,
       option.content,
@@ -27,12 +29,13 @@ export class MailService {
 
   handleEmail(
     emailName: IEmailName,
+    fromEmail: IEmailName,
     subject: string,
     template: string,
     additionalContent: any = {},
   ) {
     const emailJob = new EmailJob()
-      .setFrom(emailName)
+      .setFrom(fromEmail)
       .setTo(emailName)
       .setSubject(subject)
       .setTemplate(template)
