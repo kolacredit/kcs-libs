@@ -3,5 +3,6 @@ import { MobileDto } from '../dto';
 export interface SmsOption {
   mobile: MobileDto;
   template: string;
-  content?: any;
+  content: any;
+  config?: any;
 }

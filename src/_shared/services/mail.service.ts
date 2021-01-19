@@ -24,7 +24,7 @@ export class MailService {
   }
 
   queueToSendSms(option: SmsOption) {
-    this.handleSMS(option.mobile.phoneNumber, option.template, option.content);
+    this.handleSMS(option.mobile.phoneNumber, option.template, option.content, option.config);
   }
 
   handleEmail(
