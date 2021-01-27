@@ -3,6 +3,7 @@ export enum QueueTasks {
   SEND_SMS = 'kc.task.send.sms',
   SEND_EMAIL = 'kc.task.send.email',
   PING = 'kc.task.send.ping',
+  CREDIT_REPORT = 'kc.task.send.report',
 }
 
 export enum WorkerQueue {
@@ -10,5 +11,5 @@ export enum WorkerQueue {
 }
 
 export enum AppStatus {
-  WORKER_ERROR = 1000
+  WORKER_ERROR = 1000,
 }
