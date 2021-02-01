@@ -124,10 +124,6 @@ export class BaseController<T extends Document> {
       }
       const queryParser = new QueryParser(Object.assign({}, req.query));
       let object = await this.service.findObject(id, queryParser);
-      object = await this.service.patchUpdate(object, {
-        ...payload,
-        auth: req.auth,
-      });
       const canUpdateError = await this.service.validateUpdate(object, {
         ...payload,
         auth: req.auth,
@@ -135,6 +131,10 @@ export class BaseController<T extends Document> {
       if (!_.isEmpty(canUpdateError)) {
         throw canUpdateError;
       }
+      object = await this.service.patchUpdate(object, {
+        ...payload,
+        auth: req.auth,
+      });
       const response = await this.service.getResponse({
         queryParser,
         code: HttpStatus.OK,
