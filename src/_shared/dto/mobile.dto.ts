@@ -1,4 +1,3 @@
-import { Transform } from 'class-transformer';
 import { IsOptional, IsPhoneNumber, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -11,6 +10,5 @@ export class MobileDto {
   @IsString()
   @IsOptional()
   @Length(2, 2)
-  @Transform(s => s.trim())
   readonly isoCode: string = 'NG';
 }
