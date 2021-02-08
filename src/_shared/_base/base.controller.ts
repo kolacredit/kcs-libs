@@ -169,7 +169,7 @@ export class BaseController<T extends Document> {
       if (!_.isEmpty(canUpdateError)) {
         throw canUpdateError;
       }
-      object = await this.service.updateObject(id, payload);
+      object = await this.service.updateObject(object, payload);
       const response = await this.service.getResponse({
         queryParser,
         code: HttpStatus.OK,

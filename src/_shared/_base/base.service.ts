@@ -89,17 +89,17 @@ export class BaseService<T extends Document> {
   }
 
   /**
-   * @param {Object} id The payload object
+   * @param {Object} current The payload object
    * @param {Object} obj The payload object
    * @return {Object}
    */
-  async updateObject(id, obj) {
+  async updateObject(current, obj) {
     const tofill = this.entity.config().fillables;
     if (tofill && tofill.length > 0) {
       obj = _.pick(obj, ...tofill);
     }
-    return this.model.findOneAndUpdate(
-      { $or: [{ publicId: id }, { _id: id }], deleted: false },
+    return this.model.findByIdAndUpdate(
+      { _id: current._id },
       { ...obj },
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
