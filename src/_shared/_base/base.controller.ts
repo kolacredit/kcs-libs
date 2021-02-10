@@ -190,7 +190,7 @@ export class BaseController<T extends Document> {
         throw AppException.NOT_FOUND;
       }
       let object = await this.service.findObject(id);
-      const canDeleteError = await this.service.validateDelete(object);
+      const canDeleteError = await this.service.validateDelete(object, { auth: req.auth });
       if (!_.isEmpty(canDeleteError)) {
         throw canDeleteError;
       }

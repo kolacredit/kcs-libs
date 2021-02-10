@@ -33,7 +33,7 @@ export class BaseService<T extends Document> {
   };
 
   constructor(
-    protected readonly model: any,
+    protected model: any,
   ) {
     this.modelName = model.collection.collectionName;
     this.entity = model;
@@ -55,10 +55,11 @@ export class BaseService<T extends Document> {
   }
 
   /**
+   * @param {Object} current required for response
    * @param {Object} obj required for response
    * @return {Object}
    */
-  async validateDelete(obj) {
+  async validateDelete(current, obj) {
     return null;
   }
 
@@ -164,6 +165,9 @@ export class BaseService<T extends Document> {
       Object.assign(meta, { statusCode: option.code });
       if (option.message) {
         meta.message = option.message;
+      }
+      if (option.model) {
+        this.model = option.model;
       }
       if (option.value && option.queryParser && option.queryParser.population) {
         option.value = await this.model.populate(

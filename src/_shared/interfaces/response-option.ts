@@ -5,6 +5,7 @@ import {SmsOption, MailOption} from '../interfaces';
 export interface ResponseOption {
   value: any | Document;
   code: number;
+  model?: any;
   queryParser?: QueryParser;
   pagination?: Pagination;
   hiddenFields?: string[];
