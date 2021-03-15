@@ -36,7 +36,7 @@ export class BaseController<T extends Document> {
     try {
       const queryParser = new QueryParser(Object.assign({}, req.query));
       if (!this.service.routes.create) {
-        next(AppException.NOT_FOUND);
+        throw AppException.NOT_FOUND;
       }
       let value = await this.service.retrieveExistingResource(payload);
       if (value) {
