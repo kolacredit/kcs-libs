@@ -21,7 +21,7 @@ export class ReportJob extends Job {
     return this.user;
   }
 
-  get getReportType() {
+  public getReportType() {
     return this.reportType;
   }
 
